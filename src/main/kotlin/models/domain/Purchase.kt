@@ -1,4 +1,6 @@
-package com.example.models
+package com.example.models.domain
+
+import java.time.Instant
 
 data class Purchase(
     val id: Int,
@@ -7,5 +9,6 @@ data class Purchase(
     val quantity: Int,
     val totalPrice: Double,
     val purchaseDate: String,
+    val lastUpdated: Instant,
     val status: PurchaseStatus,
 )

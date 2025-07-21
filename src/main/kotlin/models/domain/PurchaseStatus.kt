@@ -1,4 +1,4 @@
-package com.example.models
+package com.example.models.domain
 
 enum class PurchaseStatus {
     PENDING,
