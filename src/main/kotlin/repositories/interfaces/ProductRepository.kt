@@ -1,6 +1,5 @@
 package com.example.repositories.interfaces
 
-import com.example.models.domain.Product
 import com.example.models.dto.requests.CreateProductRequest
 import com.example.models.dto.requests.GetProductRequest
 import com.example.models.dto.responses.CreateProductResponse
