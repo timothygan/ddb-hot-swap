@@ -1,7 +1,7 @@
 package com.example.models.domain
 
 data class Product(
-    val id: Int,
+    val id: String,
     val name: String,
     val price: Double,
 )
