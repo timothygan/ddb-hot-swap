@@ -17,6 +17,10 @@ repositories {
     mavenCentral()
 }
 
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+}
+
 dependencies {
     implementation("org.openfolder:kotlin-asyncapi-ktor:3.1.1")
     implementation("io.ktor:ktor-server-default-headers")
@@ -27,4 +31,7 @@ dependencies {
     implementation("io.ktor:ktor-server-config-yaml")
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    testImplementation("io.kotest:kotest-runner-junit5:$version")
+    testImplementation("io.kotest:kotest-assertions-core:$version")
+    testImplementation("io.kotest:kotest-property:$version")
 }
