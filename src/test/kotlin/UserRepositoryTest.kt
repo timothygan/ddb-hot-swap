@@ -2,7 +2,13 @@ import com.example.models.dto.requests.CreateUserRequest
 import com.example.models.dto.requests.GetUserRequest
 import com.example.repositories.implementations.inmemory.InMemoryUserRepository
 import com.example.repositories.interfaces.UserRepository
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldNotBeEmpty
+import io.ktor.server.plugins.NotFoundException
 
 class UserRepositoryTest: FunSpec ({
     
@@ -17,32 +23,50 @@ class UserRepositoryTest: FunSpec ({
         val createRequest = CreateUserRequest("testuser")
         
         // Act
-        // TODO: Implement test
-        
+        val response = repository.createUser(createRequest)
         // Assert
-        // TODO: Add assertions
+        response.id.shouldNotBeEmpty()
     }
     
     test("should retrieve user by id") {
         // Arrange
-        // TODO: Create user first
+        val createRequest = CreateUserRequest("testuser")
+        val id = repository.createUser(createRequest).id
         
         // Act
-        // TODO: Get user by id
-        
+        val getRequest = GetUserRequest(id)
+        val getRequestResponse = repository.getUser(getRequest)
         // Assert
-        // TODO: Verify user details
+        getRequestResponse.id shouldBe id
+        getRequestResponse.username shouldBe "testuser"
     }
     
     test("should return all users when multiple exist") {
         // Arrange
-        // TODO: Create multiple users
+        val createRequest = CreateUserRequest("testuser1")
+        val createRequest2 = CreateUserRequest("testuser2")
+        val createRequest3 = CreateUserRequest("testuser3")
+        val id1 = repository.createUser(createRequest).id
+        val id2 = repository.createUser(createRequest2).id
+        val id3 = repository.createUser(createRequest3).id
+
+        val idToNames = mapOf(
+            id1 to "testuser1",
+            id2 to "testuser2",
+            id3 to "testuser3"
+        )
+
         
         // Act
-        // TODO: Get all users
+        val getAllUsersResponse = repository.getAllUsers()
         
         // Assert
-        // TODO: Verify count and contents
+        getAllUsersResponse.shouldHaveSize(3)
+        getAllUsersResponse.forEach { response ->
+            response.id.shouldNotBeEmpty()
+            response.username.shouldNotBeEmpty()
+            response.username shouldBe idToNames[response.id]
+        }
     }
     
     test("should throw exception when user not found") {
@@ -50,14 +74,16 @@ class UserRepositoryTest: FunSpec ({
         val getUserRequest = GetUserRequest("nonexistent-id")
         
         // Act & Assert
-        // TODO: Verify exception is thrown
+        shouldThrow<RuntimeException> {
+            repository.getUser(getUserRequest)
+        }
     }
     
     test("should return empty list when no users exist") {
         // Act
-        // TODO: Get all users from empty repository
+        val getAllUsersResponse = repository.getAllUsers()
         
         // Assert
-        // TODO: Verify empty list
+        getAllUsersResponse.shouldBeEmpty()
     }
 })

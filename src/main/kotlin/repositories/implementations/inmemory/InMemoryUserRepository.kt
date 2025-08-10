@@ -6,6 +6,7 @@ import com.example.models.dto.requests.GetUserRequest
 import com.example.models.dto.responses.CreateUserResponse
 import com.example.models.dto.responses.GetUserResponse
 import com.example.repositories.interfaces.UserRepository
+import io.ktor.server.plugins.NotFoundException
 import java.util.UUID
 
 class InMemoryUserRepository: UserRepository {
@@ -28,6 +29,7 @@ class InMemoryUserRepository: UserRepository {
         store[getUserRequest.id]
             ?.let {
                 GetUserResponse(
+                    it.id,
                     it.username
                 )
             } ?: throw RuntimeException("User not found")
@@ -35,6 +37,6 @@ class InMemoryUserRepository: UserRepository {
     override fun getAllUsers(): List<GetUserResponse> =
         store
             .map {
-                (GetUserResponse(it.value.username))
+                GetUserResponse(it.value.id, it.value.username)
             }
 }
