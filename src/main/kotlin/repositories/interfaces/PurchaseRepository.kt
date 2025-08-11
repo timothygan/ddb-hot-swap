@@ -6,11 +6,12 @@ import com.example.models.dto.requests.GetPurchaseRequest
 import com.example.models.dto.requests.UpdateStatusRequest
 import com.example.models.dto.responses.CreatePurchaseResponse
 import com.example.models.dto.responses.GetAllPurchasesForUserResponse
+import com.example.models.dto.responses.GetPurchaseResponse
 import com.example.models.dto.responses.UpdateStatusResponse
 
 interface PurchaseRepository {
     fun createPurchase(createPurchaseRequest: CreatePurchaseRequest): CreatePurchaseResponse
     fun updatePurchaseStatus(updateStatusRequest: UpdateStatusRequest): UpdateStatusResponse
-    fun getPurchase(getPurchaseRequest: GetPurchaseRequest): GetPurchaseRequest
+    fun getPurchase(getPurchaseRequest: GetPurchaseRequest): GetPurchaseResponse
     fun getAllPurchasesForUser(getAllPurchasesForUserRequest: GetAllPurchasesForUserRequest): GetAllPurchasesForUserResponse
 }

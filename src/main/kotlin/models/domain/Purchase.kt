@@ -4,8 +4,8 @@ import java.time.Instant
 
 data class Purchase(
     val id: String,
-    val userId: Int,
-    val productId: Int,
+    val userId: String,
+    val productId: String,
     val quantity: Int,
     val totalPrice: Double,
     val purchaseDate: String,
