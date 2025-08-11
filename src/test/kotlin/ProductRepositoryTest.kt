@@ -17,8 +17,10 @@ class ProductRepositoryTest: FunSpec ({
     }
 
     test("should create a new product successfully") {
-        // Act
+        // Arrange
         val createProductRequest = CreateProductRequest("my new product", 10.0)
+        
+        // Act
         val createProductResponse = repository.createProduct(createProductRequest)
 
         // Assert
@@ -26,20 +28,22 @@ class ProductRepositoryTest: FunSpec ({
     }
 
     test("should get a product successfully") {
-        // Act
+        // Arrange
         val createProductRequest = CreateProductRequest("my new product", 10.0)
         val id = repository.createProduct(createProductRequest).id
         val getProductRequest = GetProductRequest(id)
+        
+        // Act
         val product = repository.getProduct(getProductRequest)
 
-        //Assert
+        // Assert
         product.id.shouldNotBeEmpty()
         product.name shouldBe "my new product"
         product.price shouldBe 10.0
     }
 
     test("should get products successfully") {
-        // Act
+        // Arrange
         val createProductRequest = CreateProductRequest("my new product 1", 10.0)
         val createProductRequest2 = CreateProductRequest("my new product 2", 15.0)
         val id1 = repository.createProduct(createProductRequest).id
@@ -49,9 +53,10 @@ class ProductRepositoryTest: FunSpec ({
             id2 to Product(id2,"my new product 2", 15.0),
         )
 
+        // Act
         val getAllProductsResponse = repository.getAllProducts()
 
-        //Assert
+        // Assert
         getAllProductsResponse.shouldHaveSize(2)
         getAllProductsResponse.forEach { response ->
             response.id.shouldNotBeEmpty()
@@ -61,18 +66,23 @@ class ProductRepositoryTest: FunSpec ({
     }
 
     test("should throw if product not found") {
-        //Act
+        // Arrange
         val getProductRequest = GetProductRequest("nonexistent-id")
 
-        //Assert
+        // Act & Assert
         shouldThrow<RuntimeException> {
             repository.getProduct(getProductRequest)
         }
     }
 
     test("should return empty list if no products") {
+        // Arrange
+        // (No setup needed - using empty repository)
+        
+        // Act
         val getAllProductsResponse = repository.getAllProducts()
 
+        // Assert
         getAllProductsResponse.shouldHaveSize(0)
     }
 })

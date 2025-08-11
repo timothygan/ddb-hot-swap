@@ -8,7 +8,6 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldNotBeEmpty
-import io.ktor.server.plugins.NotFoundException
 
 class UserRepositoryTest: FunSpec ({
     
@@ -32,10 +31,11 @@ class UserRepositoryTest: FunSpec ({
         // Arrange
         val createRequest = CreateUserRequest("testuser")
         val id = repository.createUser(createRequest).id
+        val getRequest = GetUserRequest(id)
         
         // Act
-        val getRequest = GetUserRequest(id)
         val getRequestResponse = repository.getUser(getRequest)
+        
         // Assert
         getRequestResponse.id shouldBe id
         getRequestResponse.username shouldBe "testuser"
@@ -49,13 +49,11 @@ class UserRepositoryTest: FunSpec ({
         val id1 = repository.createUser(createRequest).id
         val id2 = repository.createUser(createRequest2).id
         val id3 = repository.createUser(createRequest3).id
-
         val idToNames = mapOf(
             id1 to "testuser1",
             id2 to "testuser2",
             id3 to "testuser3"
         )
-
         
         // Act
         val getAllUsersResponse = repository.getAllUsers()
@@ -80,6 +78,9 @@ class UserRepositoryTest: FunSpec ({
     }
     
     test("should return empty list when no users exist") {
+        // Arrange
+        // (No setup needed - using empty repository)
+        
         // Act
         val getAllUsersResponse = repository.getAllUsers()
         
