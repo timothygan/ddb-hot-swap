@@ -27,12 +27,13 @@ class UserServiceTest : FunSpec({
     
     test("should create user successfully when valid request") {
         // Arrange
-        val request = CreateUserRequest("validuser")
+        val username = "validuser"
+        val request = CreateUserRequest(username)
         val expectedResponse = CreateUserResponse("user123")
         every { mockUserRepository.createUser(request) } returns expectedResponse
         
         // Act
-        val result = userService.createUser(request)
+        val result = userService.createUser(username)
         
         // Assert
         result.shouldBeInstanceOf<ServiceResult.Success<CreateUserResponse>>()
@@ -42,10 +43,10 @@ class UserServiceTest : FunSpec({
     
     test("should return validation error when username is empty") {
         // Arrange
-        val request = CreateUserRequest("")
+        val username = ""
         
         // Act
-        val result = userService.createUser(request)
+        val result = userService.createUser(username)
         
         // Assert
         result.shouldBeInstanceOf<ServiceResult.Error>()
@@ -56,10 +57,10 @@ class UserServiceTest : FunSpec({
     
     test("should return validation error when username is blank") {
         // Arrange
-        val request = CreateUserRequest("   ")
+        val username = "   "
         
         // Act
-        val result = userService.createUser(request)
+        val result = userService.createUser(username)
         
         // Assert
         result.shouldBeInstanceOf<ServiceResult.Error>()
@@ -71,10 +72,9 @@ class UserServiceTest : FunSpec({
     test("should return validation error when username is too long") {
         // Arrange
         val longUsername = "a".repeat(51) // Assuming 50 char limit
-        val request = CreateUserRequest(longUsername)
-        
+
         // Act
-        val result = userService.createUser(request)
+        val result = userService.createUser(longUsername)
         
         // Assert
         result.shouldBeInstanceOf<ServiceResult.Error>()
@@ -85,11 +85,12 @@ class UserServiceTest : FunSpec({
     
     test("should handle repository exceptions gracefully") {
         // Arrange
-        val request = CreateUserRequest("validuser")
+        val username = "validuser"
+        val request = CreateUserRequest(username)
         every { mockUserRepository.createUser(request) } throws RuntimeException("Database error")
         
         // Act
-        val result = userService.createUser(request)
+        val result = userService.createUser(username)
         
         // Assert
         result.shouldBeInstanceOf<ServiceResult.Error>()

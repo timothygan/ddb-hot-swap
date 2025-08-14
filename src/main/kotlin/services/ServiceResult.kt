@@ -5,9 +5,9 @@ sealed class ServiceResult<out T> {
     data class Error(val error: ServiceError) : ServiceResult<Nothing>()
 }
 
-sealed class ServiceError(val message: String) {
-    class ValidationError(message: String) : ServiceError(message)
-    class NotFound(entity: String, id: String) : ServiceError("$entity with id $id not found")
-    class BusinessRuleViolation(message: String) : ServiceError(message)
-    class UnknownError(message: String) : ServiceError(message)
+sealed class ServiceError(val message: String, val e: Exception) : ServiceResult<ServiceError>() {
+    class ValidationError(message: String, e: Exception) : ServiceError(message, e)
+    class NotFound(entity: String, id: String, e: Exception) : ServiceError("$entity with id $id not found", e)
+    class BusinessRuleViolation(message: String, e: Exception) : ServiceError(message, e)
+    class UnknownError(message: String, e: Exception) : ServiceError(message, e)
 }
