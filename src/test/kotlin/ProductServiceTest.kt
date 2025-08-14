@@ -27,12 +27,14 @@ class ProductServiceTest : FunSpec({
     
     test("should create product successfully when valid request") {
         // Arrange
-        val request = CreateProductRequest("Valid Product", 29.99)
+        val name = "Valid Product"
+        val price = 29.99
+        val request = CreateProductRequest(name, price)
         val expectedResponse = CreateProductResponse("product123")
         every { mockProductRepository.createProduct(request) } returns expectedResponse
         
         // Act
-        val result = productService.createProduct(request)
+        val result = productService.createProduct(name, price)
         
         // Assert
         result.shouldBeInstanceOf<ServiceResult.Success<CreateProductResponse>>()
@@ -42,10 +44,12 @@ class ProductServiceTest : FunSpec({
     
     test("should return validation error when product name is empty") {
         // Arrange
-        val request = CreateProductRequest("", 29.99)
+        val name = ""
+        val price = 29.99
+        val request = CreateProductRequest(name, price)
         
         // Act
-        val result = productService.createProduct(request)
+        val result = productService.createProduct(name, price)
         
         // Assert
         result.shouldBeInstanceOf<ServiceResult.Error>()
@@ -56,10 +60,12 @@ class ProductServiceTest : FunSpec({
     
     test("should return validation error when product name is blank") {
         // Arrange
-        val request = CreateProductRequest("   ", 29.99)
+        val name = "   "
+        val price = 29.99
+        val request = CreateProductRequest(name, price)
         
         // Act
-        val result = productService.createProduct(request)
+        val result = productService.createProduct(name, price)
         
         // Assert
         result.shouldBeInstanceOf<ServiceResult.Error>()
@@ -70,10 +76,11 @@ class ProductServiceTest : FunSpec({
     
     test("should return validation error when price is zero") {
         // Arrange
-        val request = CreateProductRequest("Valid Product", 0.0)
-        
+        val name = "Valid Product"
+        val price = 0.0
+
         // Act
-        val result = productService.createProduct(request)
+        val result = productService.createProduct(name, price)
         
         // Assert
         result.shouldBeInstanceOf<ServiceResult.Error>()
@@ -84,10 +91,12 @@ class ProductServiceTest : FunSpec({
     
     test("should return validation error when price is negative") {
         // Arrange
-        val request = CreateProductRequest("Valid Product", -10.0)
+        val name = "Valid Product"
+        val price = -10.00
+        val request = CreateProductRequest(name, price)
         
         // Act
-        val result = productService.createProduct(request)
+        val result = productService.createProduct(name, price)
         
         // Assert
         result.shouldBeInstanceOf<ServiceResult.Error>()
@@ -99,10 +108,11 @@ class ProductServiceTest : FunSpec({
     test("should return validation error when product name is too long") {
         // Arrange
         val longName = "a".repeat(101) // Assuming 100 char limit
-        val request = CreateProductRequest(longName, 29.99)
+        val price = 29.99
+        val request = CreateProductRequest(longName, price)
         
         // Act
-        val result = productService.createProduct(request)
+        val result = productService.createProduct(longName, price)
         
         // Assert
         result.shouldBeInstanceOf<ServiceResult.Error>()
@@ -113,12 +123,14 @@ class ProductServiceTest : FunSpec({
     
     test("should handle repository exceptions gracefully during creation") {
         // Arrange
-        val request = CreateProductRequest("Valid Product", 29.99)
+        val name = "Valid Product"
+        val price = 29.99
+        val request = CreateProductRequest(name, price)
         every { mockProductRepository.createProduct(request) } throws RuntimeException("Database error")
         
         // Act
-        val result = productService.createProduct(request)
-        
+        val result = productService.createProduct(name, price)
+
         // Assert
         result.shouldBeInstanceOf<ServiceResult.Error>()
         result.error.shouldBeInstanceOf<ServiceError.UnknownError>()
@@ -202,10 +214,12 @@ class ProductServiceTest : FunSpec({
     
     test("should return business rule violation when price exceeds maximum") {
         // Arrange
-        val request = CreateProductRequest("Expensive Product", 10000.01) // Assuming $10k limit
-        
+        val name = "Expensive Product"
+        val price = 10000.01
+        val request = CreateProductRequest(name, price) // Assuming $10k limit
+
         // Act
-        val result = productService.createProduct(request)
+        val result = productService.createProduct(name, price)
         
         // Assert
         result.shouldBeInstanceOf<ServiceResult.Error>()
