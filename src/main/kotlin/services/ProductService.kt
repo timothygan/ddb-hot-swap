@@ -1,6 +1,7 @@
 package com.example.services
 
 import com.example.models.dto.requests.CreateProductRequest
+import com.example.models.dto.requests.GetProductRequest
 import com.example.models.dto.responses.CreateProductResponse
 import com.example.models.dto.responses.GetProductResponse
 import com.example.repositories.interfaces.ProductRepository
@@ -33,13 +34,48 @@ class ProductService(
             )
         }
     
-    fun getProduct(productId: String): ServiceResult<GetProductResponse> {
-        TODO("Implement product retrieval - validate productId not empty, handle repository exceptions")
-    }
+    fun getProduct(productId: String): ServiceResult<GetProductResponse> =
+        try {
+            validateProductId(productId)?.let {
+                ServiceResult.Error(it)
+            } ?: productRepository
+                .getProduct(
+                    GetProductRequest(
+                        productId
+                    )
+                ).let {
+                    ServiceResult.Success(it)
+                }
+        } catch (e: Exception) {
+            when(e) {
+                is RuntimeException -> ServiceResult.Error(
+                    ServiceError.NotFound(
+                        "Product", productId, e
+                    )
+                )
+                else -> ServiceResult.Error(
+                    ServiceError.UnknownError(
+                        e.message ?: e.javaClass.simpleName,
+                        e
+                    )
+                )
+            }
+
+        }
     
-    fun getAllProducts(): ServiceResult<List<GetProductResponse>> {
-        TODO("Implement get all products - handle repository exceptions")
-    }
+    fun getAllProducts(): ServiceResult<List<GetProductResponse>> =
+        try {
+            productRepository
+                .getAllProducts()
+                .let { ServiceResult.Success(it) }
+        } catch (e: Exception) {
+            ServiceResult.Error(
+                ServiceError.UnknownError(
+                    e.message ?: e.javaClass.simpleName,
+                    e
+                )
+            )
+        }
     
     private fun validateCreateProductRequest(name: String, price: Double): ServiceError? =
         when {
@@ -72,7 +108,7 @@ class ProductService(
             }
 
             price > 10000 -> {
-                ServiceError.ValidationError(
+                ServiceError.BusinessRuleViolation(
                     "Price must be less than 10000",
                     Exception()
                 )
@@ -82,7 +118,21 @@ class ProductService(
         }
 
     
-    private fun validateProductId(productId: String): ServiceError? {
-        TODO("Implement validation: empty productId")
+    private fun validateProductId(productId: String): ServiceError? = when {
+        productId.isBlank() -> {
+            ServiceError.ValidationError(
+                "Product ID cannot be empty",
+                Exception()
+            )
+        }
+
+        productId.isEmpty() -> {
+            ServiceError.ValidationError(
+                "Product ID cannot be empty",
+                Exception()
+            )
+        }
+
+        else -> null
     }
 }

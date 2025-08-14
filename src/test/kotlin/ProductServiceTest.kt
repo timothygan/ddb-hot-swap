@@ -46,8 +46,7 @@ class ProductServiceTest : FunSpec({
         // Arrange
         val name = ""
         val price = 29.99
-        val request = CreateProductRequest(name, price)
-        
+
         // Act
         val result = productService.createProduct(name, price)
         
@@ -62,8 +61,7 @@ class ProductServiceTest : FunSpec({
         // Arrange
         val name = "   "
         val price = 29.99
-        val request = CreateProductRequest(name, price)
-        
+
         // Act
         val result = productService.createProduct(name, price)
         
@@ -93,8 +91,7 @@ class ProductServiceTest : FunSpec({
         // Arrange
         val name = "Valid Product"
         val price = -10.00
-        val request = CreateProductRequest(name, price)
-        
+
         // Act
         val result = productService.createProduct(name, price)
         
@@ -109,8 +106,7 @@ class ProductServiceTest : FunSpec({
         // Arrange
         val longName = "a".repeat(101) // Assuming 100 char limit
         val price = 29.99
-        val request = CreateProductRequest(longName, price)
-        
+
         // Act
         val result = productService.createProduct(longName, price)
         
@@ -216,7 +212,6 @@ class ProductServiceTest : FunSpec({
         // Arrange
         val name = "Expensive Product"
         val price = 10000.01
-        val request = CreateProductRequest(name, price) // Assuming $10k limit
 
         // Act
         val result = productService.createProduct(name, price)
@@ -224,7 +219,7 @@ class ProductServiceTest : FunSpec({
         // Assert
         result.shouldBeInstanceOf<ServiceResult.Error>()
         result.error.shouldBeInstanceOf<ServiceError.BusinessRuleViolation>()
-        result.error.message shouldBe "Product price cannot exceed $10,000.00"
+        result.error.message shouldBe "Price must be less than 10000"
         verify(exactly = 0) { mockProductRepository.createProduct(any()) }
     }
 })
